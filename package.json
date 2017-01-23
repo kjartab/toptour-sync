@@ -1,0 +1,19 @@
+{
+  "name": "toptoursync",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "mocha"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^4.14.0",
+    "mocha": "^3.2.0",
+    "pg": "^6.1.2"
+  },
+  "devDependencies": {
+    "mocha": "^3.2.0"
+  }
+}

@@ -1,0 +1,13 @@
+---
+- name: toptour
+  hosts: "{{ hosts_input | default('default') }}"
+  become: yes
+
+  tasks:
+    - shell: ansible-galaxy install {{item}}
+      with_items:
+        - geerlingguy.nodejs
+        - kjartab.postgis
+        - geerlingguy.redis
+
+    - apt: name=python-psycopg2
