@@ -1,7 +1,7 @@
 var request = require('request');
 require('./env.js');
 
-var host = process.env['UTNO_HOST'];
+var host = 'https://' + process.env['SYS_ENV'] + '.nasjonalturbase.no';
 var apiKey = process.env['UTNO_API_KEY'];
 
 function getDocuments(type, parameters) {
@@ -17,7 +17,7 @@ function getDocument(type, id) {
 
 function get(url, parameters) {
 
-    return new Promise(function (resolve, reject){
+    return new Promise(function (resolve, reject) {
         parameters = parameters || {};
         parameters['api_key'] = apiKey;
         request.get({url:url, qs:parameters}, function(err, response, body) {

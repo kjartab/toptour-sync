@@ -10,14 +10,15 @@ var pool = new Pool({
     idleTimeoutMillis: 1000, // close & remove clients which have been idle > 1 second
 });
 
+var schema = 'utno' + (process.env['SYS_ENV'] == 'dev' ? '_dev' : '');
 
 pool.on('error', function(e, client) {
 // console.log(e.message, e.trace);
 });
 
+
 function createGeomJsonbTable(table) {
-    var query = "CREATE TABLE IF NOT EXISTS " + table + " (id varchar primary key, attribs jsonb, geom geometry)"
-    
+    var query = "CREATE TABLE IF NOT EXISTS " + schema + "." + table + " (id varchar primary key, attribs jsonb, geom geometry)"
     return poolQuery(query);
 }
 
@@ -28,7 +29,7 @@ function createSchema(schema) {
 }
 
 function getDocument(type, id) {
-    query = 'SELECT id, attribs, ST_AsgeoJson(geom) FROM ' + type + ' WHERE id='+id;
+    query = 'SELECT id, attribs, ST_AsgeoJson(geom) FROM ' + schema + '.' + type + ' WHERE id='+id;
     tuples = []
     return poolQuery(query, tuples);
 }
@@ -41,12 +42,12 @@ function getDocumentsByIds(type, ids) {
         params.push("$"+(i+1));
     }
 
-    var query = 'SELECT id, attribs, ST_AsgeoJson(geom) FROM ' + type + ' WHERE id IN (' + params.join(",") + ');';
+    var query = 'SELECT id, attribs, ST_AsgeoJson(geom) FROM ' + schema + '.' + type + ' WHERE id IN (' + params.join(",") + ');';
     return poolQuery(query, ids);
 }
 
 function getDocuments(type, attribs) {
-    var query = 'SELECT id, attribs, ST_AsgeoJson(geom) FROM ' + type + ' LIMIT 5';
+    var query = 'SELECT id, attribs, ST_AsgeoJson(geom) FROM ' + schema + '.' + type + ' LIMIT 5';
     var tuples = [];
     return poolQuery(query, tuples);
 }
@@ -81,8 +82,7 @@ function insertDocument(type, id, doc) {
         altvar = ",$3";
         tuples.push(id);
     }
-    var query = "INSERT INTO " + type + "(attribs, geom " + alt + ") VALUES ($1, ST_GeomFromGeojson($2) " + altvar + " );";
-
+    var query = "INSERT INTO " + schema + "." + type + "(attribs, geom " + alt + ") VALUES ($1, ST_GeomFromGeojson($2) " + altvar + " );";
     return poolQuery(query, tuples);
 
 }
@@ -93,14 +93,13 @@ function updateDocument(type, id, doc) {
     var geom = getGeometry(doc);
     tuples = [attribs, geom, id];
 
-    var query = "UPDATE " + type + "SET attribs = $1, geom = ST_GeomFromGeojson($2) WHERE id=$3";
-
+    var query = "UPDATE " + schema + "." + type + " SET attribs = $1, geom = ST_GeomFromGeojson($2) WHERE id=$3";
     return poolQuery(query, tuples);
 
 }
 
 function upsertDocument(type, id, document) {
-    var query = 'SELECT ' + type + ' WITH VALUES ' + values + ' WHERE id='+id;
+    var query = 'SELECT ' + schema + '.' + type + ' WITH VALUES ' + values + ' WHERE id='+id;
     var tuples = [id];
 
     return new Promise(function(resolve, reject) {
@@ -112,7 +111,7 @@ function upsertDocument(type, id, document) {
 }
 
 function deleteDocument(type, id) {
-    query = 'DELETE FROM ' + type + ' WHERE id=$1::varchar;'
+    query = 'DELETE FROM ' + schema + '.' + type + ' WHERE id=$1::varchar;'
     tuples = [id]
     return poolQuery(query, tuples);
 }

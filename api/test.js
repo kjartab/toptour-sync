@@ -9,7 +9,7 @@ Promise.resolve()
 
         if (n == 0) {
 
-            return (0);
+            return;
         }
 
         var promise = Promise.resolve().then(
@@ -19,7 +19,7 @@ Promise.resolve()
             }
         );
 
-        return ( promise );
+        return promise;
 
     }
 );
