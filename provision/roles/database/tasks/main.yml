@@ -1,3 +1,39 @@
 ---
-- name: k
+- apt: name=python-psycopg2
+
+- postgresql_db:
+    name: "{{database}}"
+    encoding: UTF-8
+    template: template0
   
+- postgresql_user:
+    db: "{{database}}"
+    name: "{{app_user}}"
+    priv: ALL
+    password: postgres
+    state: present
+
+- postgresql_privs:
+    db: "{{database}}"
+    state: present
+    privs: ALL
+    type: database
+    role: "{{app_user}}"
+  
+- postgresql_schema:
+    db: "{{database}}"
+    state: present
+    name: utno
+    owner: "{{app_user}}"
+  
+- postgresql_schema:
+    db: "{{database}}"
+    state: present
+    name: utno_dev
+    owner: "{{app_user}}"
+  
+- postgresql_ext:
+    name: postgis
+    db: "{{database}}"
+  
+

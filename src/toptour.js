@@ -29,13 +29,16 @@ function insertDocument(type, id) {
     });
 }
 
+
 function checkUpdates(type, documents) {
 
     return new Promise(function(resolve, reject) {
 
-        var ids = documents.map(function(doc) {
-            return doc['_id'];
-        });
+        var ids = documents.map(doc => doc['_id']);
+
+        if (ids.length == 0) {
+            return;
+        }
 
         utDb.getDocumentsByIds(type, ids)
         .then(function(rows) {
@@ -49,16 +52,15 @@ function checkUpdates(type, documents) {
                     var found = false;
                     for (let row of rows) {
                         if (update['_id'] == row['id']) {
-                            if (update['endret'] == row['attribs']['endret']) {
-                                // The document version already exists
-                                found = true;
-                            } else {
+                            found = true;
+                            if (update['endret'] != row['attribs']['endret']) {
                                 // The document must be updated
                                 oldDocs.push(update);
                             }
                         }
                     }
                     if (!found) {
+                        // The document does not exist in database
                         newDocs.push(update);
                     }
                 }
@@ -66,7 +68,6 @@ function checkUpdates(type, documents) {
                 newDocs = documents;
             }
 
-            // Handle the update, update documents
             var getAndUpsert = [];
 
             for (let update of newDocs) {
@@ -76,7 +77,7 @@ function checkUpdates(type, documents) {
             for (let update of oldDocs) {
                 getAndUpsert.push(updateDocument(type, update['_id']));
             }
-
+            console.log(getAndUpsert, "getandupsert");
             if (getAndUpsert.length == 0) {
                 resolve();
             } else {
@@ -96,59 +97,9 @@ function updateSnowCover(id) {
 }
 
 
-// function handleUpdates(type, parameters) {
-
-//     parameters = parameters || { after : '2000-01-01T00:00:38', limit : 50, skip : 0 };
-//     // var parameters = parameters || { after : '2017-01-18T00:00:38', limit : 50, skip : 0 };
-
-//     function fetchAndHandle(type, parameters) {
-        
-//         var updatesPromise = utApi.getDocuments(type, parameters);
-//         updatesPromise.then(function(response) {
-//             var resp = JSON.parse(response);
-
-//             var skip = parameters['skip'];
-//             var docs = resp['documents'];
-//             var total = resp['total'];  
-    
-//             console.log("total - skip - count:", total, skip, docs.length)
-//             if (total - skip <= 0) {
-//                 return;
-//             } else {
-//                 parameters['skip'] += docs.length;
-//             }
-
-//             var checkUpdatesPromise = checkUpdates(type, docs);
-
-//             checkUpdatesPromise.then(function(response) {
-//                 // Fetch next 50
-//                 console.log("fetchAndHandle")
-//                 fetchAndHandle(type, parameters);
-//             }, function(error) {
-//                 console.log(error);
-//                 return;
-//             });
-        
-//         }, function(error) {
-//             console.log(error);
-//             return;
-//         });
-        
-//     }
-
-//     fetchAndHandle(type, parameters);
-
-    
-// }
-
-
-
-
-
-
 function handleUpdates(type, parameters) {
 
-    parameters = parameters || { after : '2000-01-01T00:00:38', limit : 50, skip : 0 };
+    parameters = parameters || { after : '2017-01-11T00:00:38', limit : 50, skip : 0 };
     // var parameters = parameters || { after : '2017-01-18T00:00:38', limit : 50, skip : 0 };
 
     Promise.resolve()
@@ -167,6 +118,7 @@ function handleUpdates(type, parameters) {
                         var resp = JSON.parse(response);
                         var docs = resp['documents'];
                         parameters['skip'] += docs.length;
+                        
                         return checkUpdates(type, docs);
                     }
                 ).then(

@@ -1,0 +1,10 @@
+---
+- name: Move files to server
+  copy: src={{ playbook_dir.split("/")[0:-1]|join("/") }}/src dest={{deploy_dir}}
+  tags: movefiles
+
+
+- name: Move files to server
+  copy: src={{ playbook_dir.split("/")[0:-1]|join("/") }}/package.json dest={{deploy_dir}}/package.json
+  tags: movefiles2
+

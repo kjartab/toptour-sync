@@ -4,7 +4,7 @@ var passport = require('passport');
 var app = express();
 var db = require('./db.js');
 
-var toptourProcessing = require('./toptour-processing.js');
+// var toptourProcessing = require('./toptour-processing.js');
 
 var passport = require('passport')
 var FacebookStrategy = require('passport-facebook').Strategy;
@@ -48,9 +48,9 @@ app.get('/:type', function(req, res) {
 
 app.post('/jobs/utno/:type', function(req, res) {
     var type = req.params.type;
-
+    
     if (verifyType(type)) {
-        toptourProcessing.
+        // toptourProcessing.
     }
 });
 
@@ -59,4 +59,4 @@ function verifyType(type) {
     return ['turer', 'steder', 'bilder', 'grupper'].indexOf(type) > -1; 
 }
 
-app.listen(5043);
+app.listen(5044);

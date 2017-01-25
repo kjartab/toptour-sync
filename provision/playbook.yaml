@@ -3,41 +3,20 @@
   hosts: "{{ hosts_input | default('default') }}"
   become: yes
   vars:
-    app_user: vagrant
+    app_name: toptour_api
+    app_user: "{{ deploy_user | default('vagrant') }}"
+    deploy_dir: "/opt/{{app_name}}"
     nodejs_version: "7.x"
     nodejs_install_npm_user: "{{app_user}}"
     database: geodata
+
+  pre_tasks:
+    - apt: name=python-psycopg2
 
   roles:
     - geerlingguy.nodejs
     - kjartab.postgis 
     - geerlingguy.redis
-
-  tasks:
-    - postgresql_db:
-        name: "{{database}}"
-        encoding: UTF-8
-        template: template0
+    - role: database
       become_user: postgres
-
-    - postgresql_user:
-        db: "{{database}}"
-        name: "{{app_user}}"
-        priv: ALL
-        password: postgres
-        state: present
-      become_user: postgres
-
-    - postgresql_privs:
-        db: "{{database}}"
-        state: present
-        privs: ALL
-        type: database
-        role: "{{app_user}}"
-      become_user: postgres
-
-    # - postgresql_schema:
-    #     name: geodata
-    #     database: "{{database}}"
-    #   become_user: postgres
-    # 
+    - app

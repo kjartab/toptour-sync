@@ -9,9 +9,7 @@ var queue = kue.createQueue({
   }
 });
 
-
 queue.process("handleUpdates", 2, function(job, done) {
-
     var type = job.data.documentType;
 
     toptour.handleUpdates(type)
@@ -41,5 +39,5 @@ queue.process("updateTourConditions", 50, function(job, done) {
 
 
 queue.process("updateElasticsearch", 1, function(job, done) {
-
+  
 });

@@ -13,7 +13,7 @@ var pool = new Pool({
 var schema = 'utno' + (process.env['SYS_ENV'] == 'dev' ? '_dev' : '');
 
 pool.on('error', function(e, client) {
-// console.log(e.message, e.trace);
+    console.log(e.message, e.trace);
 });
 
 
@@ -29,8 +29,8 @@ function createSchema(schema) {
 }
 
 function getDocument(type, id) {
-    query = 'SELECT id, attribs, ST_AsgeoJson(geom) FROM ' + schema + '.' + type + ' WHERE id='+id;
-    tuples = []
+    query = 'SELECT id, attribs, ST_AsgeoJson(geom) FROM ' + schema + '.' + type + ' WHERE id=$1';
+    tuples = [id]
     return poolQuery(query, tuples);
 }
 
@@ -41,7 +41,7 @@ function getDocumentsByIds(type, ids) {
     for (var i=0; i<ids.length; i++) {
         params.push("$"+(i+1));
     }
-
+    
     var query = 'SELECT id, attribs, ST_AsgeoJson(geom) FROM ' + schema + '.' + type + ' WHERE id IN (' + params.join(",") + ');';
     return poolQuery(query, ids);
 }
@@ -55,7 +55,7 @@ function getDocuments(type, attribs) {
 function getAttributes(doc) {
     var attribs = {};
     for (var key in doc) {
-        if (key != 'geom') {
+        if (key != 'geojson') {
             attribs[key] = doc[key];
         }
     }
