@@ -4,6 +4,7 @@
   become: yes
   vars:
     app_name: toptour_api
+    local_dir: '{{ playbook_dir.split("/")[0:-1]|join("/") }}'
     app_user: "{{ deploy_user | default('vagrant') }}"
     deploy_dir: "/opt/{{app_name}}"
     nodejs_version: "7.x"
@@ -14,9 +15,9 @@
     - apt: name=python-psycopg2
 
   roles:
-    - geerlingguy.nodejs
-    - kjartab.postgis 
-    - geerlingguy.redis
+    # - role: geerlingguy.nodejs
+    # - role: kjartab.postgis
+    # - role: geerlingguy.redis
     - role: database
       become_user: postgres
-    - app
+    - role: app

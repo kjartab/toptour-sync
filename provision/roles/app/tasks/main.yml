@@ -1,10 +1,19 @@
 ---
-- name: Move files to server
-  copy: src={{ playbook_dir.split("/")[0:-1]|join("/") }}/src dest={{deploy_dir}}
-  tags: movefiles
+# - name: npm install
+- npm: path={{local_dir}}
+  
+- name: rollup package
+  comman: rollup -c
+  # local_action: npm install path={{local_dir}}
 
+# - name: rollup
+#   command: rollup 
+#   environment:
+#     PATH: "{{local_dir}}"
 
-- name: Move files to server
-  copy: src={{ playbook_dir.split("/")[0:-1]|join("/") }}/package.json dest={{deploy_dir}}/package.json
-  tags: movefiles2
+# - name: Move files to server
+#   copy: src={{local_dir}}/build dest={{deploy_dir}}
 
+# - name: Setup env.js
+#   template: src=env.js.j2 dest={{deploy_dir}}/env.js
+#   

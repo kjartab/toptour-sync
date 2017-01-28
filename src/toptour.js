@@ -118,7 +118,6 @@ function handleUpdates(type, parameters) {
                         var resp = JSON.parse(response);
                         var docs = resp['documents'];
                         parameters['skip'] += docs.length;
-                        
                         return checkUpdates(type, docs);
                     }
                 ).then(

@@ -4,54 +4,61 @@ var passport = require('passport');
 var app = express();
 var db = require('./db.js');
 
-// var toptourProcessing = require('./toptour-processing.js');
-
-var passport = require('passport')
-var FacebookStrategy = require('passport-facebook').Strategy;
-
-// passport.use(new FacebookStrategy({
-//     clientID: process.env['FACEBOOK_APP_ID'],
-//     clientSecret: process.env['FACEBOOK_APP_SECRET'],
-//     callbackURL: "http://localhost:5043/auth/facebook/callback"
-//   },
-//   function(accessToken, refreshToken, profile, done) {
-//     User.findOrCreate(..., function(err, user) {
-//       if (err) { return done(err); }
-//       done(null, user);
-//     });
-//   }
-// );
-
 app.get('/', function(req, res) {
-    res.send("Toptour API");
+    res.send({ "message": "Welcome to Toptour API" });
 });
 
-app.get('/:type', function(req, res) {
+app.get('/utno/:type', function(req, res) {
 
-    var type = req.params.type;
+    if (!verifyType(req.params.type)) {
+        res.sendStatus(404);
 
-    if (verifyType(type)) {
-
-        db.getDocuments(type)
+    } else {
+        db.getDocuments(req.params)
         .then(function(response) {
             res.send(response);
         })
         .catch(function(error) {
             res.sendStatus(500);
         });
-
-    } else {
-        res.sendStatus(404);
     }
+
+});
+
+app.get('/utno/:type/:id', function(req, res) {
+
+    if (!verifyType(req.params.type)) {
+        res.sendStatus(404);
+    } else {
+        db.getDocument(req.params)
+        .then(function(rows) {
+            if (rows.length > 0) {
+                res.send(rows[0]);            
+            } else {
+                res.sendStatus(404);                
+            }
+        })
+        .catch(function(error) {
+            res.sendStatus(500);
+        });
+    }
+
 });
 
 
-app.post('/jobs/utno/:type', function(req, res) {
+app.post('/jobs/utno/update/:type', function(req, res) {
+
     var type = req.params.type;
-    
-    if (verifyType(type)) {
-        // toptourProcessing.
-    }
+    res.send({"status" : "OK", "processing" : "updating utno: " + type });
+
+});
+
+
+app.post('/jobs/nve/snow/:type', function(req, res) {
+
+    var type = req.params.type;
+    res.send({"status" : "OK", "processing" : "updating snow: " + type });
+
 });
 
 

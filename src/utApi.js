@@ -21,9 +21,10 @@ function get(url, parameters) {
         parameters = parameters || {};
         parameters['api_key'] = apiKey;
         request.get({url:url, qs:parameters}, function(err, response, body) {
-
+            // console.log(err, response, body);
             if (err) {
                 reject(err);
+                return;
             }
             if (response.statusCode == 200) {
                 resolve(body);
@@ -42,7 +43,7 @@ function post(url, body, parameters) {
 
     return new Promise(function (resolve, reject){
         request.get({url:url, qs:parameters, body:body}, function(err, response, body) {
-
+            console.log(response);
             if (err) {
                 reject(err);
             }
@@ -59,7 +60,8 @@ function post(url, body, parameters) {
 
 module.exports = {
     getDocuments : getDocuments, 
-    getDocument : getDocument,
-    post: post
-}
+    getDocument : getDocument, 
+    post : post
+};
 
+    

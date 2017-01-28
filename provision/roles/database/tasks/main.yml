@@ -1,5 +1,4 @@
 ---
-- apt: name=python-psycopg2
 
 - postgresql_db:
     name: "{{database}}"
@@ -20,20 +19,18 @@
     type: database
     role: "{{app_user}}"
   
-- postgresql_schema:
-    db: "{{database}}"
-    state: present
-    name: utno
-    owner: "{{app_user}}"
+# - postgresql_schema:
+#     db: "{{database}}"
+#     state: present
+#     name: utno
+#     owner: "{{app_user}}"
   
-- postgresql_schema:
-    db: "{{database}}"
-    state: present
-    name: utno_dev
-    owner: "{{app_user}}"
+# - postgresql_schema:
+#     db: "{{database}}"
+#     state: present
+#     name: utno_dev
+#     owner: "{{app_user}}"
   
 - postgresql_ext:
     name: postgis
     db: "{{database}}"
-  
-
