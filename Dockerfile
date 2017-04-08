@@ -1,4 +1,4 @@
-FROM node:7.3.0-alpine
+FROM node:latest
 RUN addgroup -S node && adduser -S -g node node 
 
 RUN mkdir -p /usr/src/app
