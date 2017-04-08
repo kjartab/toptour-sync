@@ -13,11 +13,19 @@
 
   pre_tasks:
     - apt: name=python-psycopg2
-
+    - template: src=locale.j2 dest=/etc/default/locale
+    # - apt_repository: repo=deb http://ppa.launchpad.net/ansible/ansible/ubuntu trusty main
+  
   roles:
-    # - role: geerlingguy.nodejs
-    # - role: kjartab.postgis
-    # - role: geerlingguy.redis
+    - role: geerlingguy.nodejs
+    # - role: ansible-role-postgresql
+    # - role: ansible-role-postgis
+    # - role: kjartab.tomcat
+    # - role: ansible-role-tomcat
+    #   tags: tomcat
+    # - role: ansible-role-geoserver
+    #   tags: geoserver
     - role: database
+      tags: db
       become_user: postgres
-    - role: app
+    # - role: app

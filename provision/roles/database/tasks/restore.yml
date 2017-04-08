@@ -1,0 +1,6 @@
+---
+- name: Restore database {{database}}
+  shell: "psql {{database}} < {{db_output_directory}}/{{db_backup_file}}"
+  tags: db_restore  
+  become_user: postgres
+

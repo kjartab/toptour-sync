@@ -14,7 +14,7 @@ var pool = new Pool({
 
 var schema = 'utno' + (process.env['SYS_ENV'] == 'dev' ? '_dev' : '');
 
-pool.on('error', function(e, client) {
+pool.on(' error', function(e, client) {
     console.log("db error", e.message, e.trace);
 });
 
@@ -51,10 +51,16 @@ function getDocumentsByIds(type, ids) {
 
 function getDocuments(parameters) {
     var type = parameters.type;
-    var limit = parameters.limit || 5;
-    // var bbox = parameters.bbox;
-    var query = 'SELECT id, attribs, ST_AsgeoJson(geom) FROM ' + schema + '.' + type + ' LIMIT $1';
-    var tuples = [limit];
+    
+    var tuples = [];
+    if (parameters.limit) {
+        tuples.push(parameters.limit);
+    }
+    var query = 'SELECT id, attribs, ST_AsgeoJson(geom) FROM ' + schema + '.' + type;
+    if (tuples.length > 0) {
+        query += ' LIMIT $1'; 
+    }
+    console.log(tuples, query);
     return poolQuery(query, tuples);
 }
 
@@ -133,7 +139,7 @@ function poolQuery(query, tuples) {
             }
 
             client.query(query, tuples, function(err, result) {
-
+                
                 done();
 
                 if(err) {

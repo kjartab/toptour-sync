@@ -1,0 +1,3 @@
+---
+- name: backup database
+  command: pg_dump {{database}} > {{db_output_directory}}/{{db_backup_file}}

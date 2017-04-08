@@ -1,24 +1,33 @@
----
+# ---
 
-- postgresql_db:
-    name: "{{database}}"
-    encoding: UTF-8
-    template: template0
+# - postgresql_db:
+#     name: "{{database}}"
+#     encoding: UTF-8
+#     lc_collate: nb_NO.UTF-8
+#     lc_ctype: nb_NO.UTF-8
+#     template: template0
   
-- postgresql_user:
-    db: "{{database}}"
-    name: "{{app_user}}"
-    priv: ALL
-    password: postgres
-    state: present
+# - postgresql_user:
+#     db: "{{database}}"
+#     name: "{{app_user}}"
+#     priv: ALL
+#     password: postgres
+#     state: present
 
-- postgresql_privs:
-    db: "{{database}}"
-    state: present
-    privs: ALL
-    type: database
-    role: "{{app_user}}"
+# - postgresql_privs:
+#     db: "{{database}}"
+#     state: present
+#     privs: ALL
+#     type: database
+#     role: "{{app_user}}"
   
+  
+# - postgresql_ext:
+#     name: postgis
+#     db: "{{database}}"
+
+# - include: restore.yml db_output_directory=/vagrant/data db_backup_file=backup_geodata
+
 # - postgresql_schema:
 #     db: "{{database}}"
 #     state: present
@@ -30,7 +39,3 @@
 #     state: present
 #     name: utno_dev
 #     owner: "{{app_user}}"
-  
-- postgresql_ext:
-    name: postgis
-    db: "{{database}}"

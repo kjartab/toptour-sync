@@ -99,7 +99,7 @@ function updateSnowCover(id) {
 
 function handleUpdates(type, parameters) {
 
-    parameters = parameters || { after : '2017-01-11T00:00:38', limit : 50, skip : 0 };
+    parameters = parameters || { after : '2000-01-11T00:00:38', limit : 50, skip : 0 };
     // var parameters = parameters || { after : '2017-01-18T00:00:38', limit : 50, skip : 0 };
 
     Promise.resolve()

@@ -20,18 +20,21 @@ function get(url, parameters) {
     return new Promise(function (resolve, reject) {
         parameters = parameters || {};
         parameters['api_key'] = apiKey;
+        console.log(parameters);
         request.get({url:url, qs:parameters}, function(err, response, body) {
             // console.log(err, response, body);
             if (err) {
                 reject(err);
                 return;
             }
+            console.log(response.statusCode, parameters['id'], url)
             if (response.statusCode == 200) {
                 resolve(body);
+            } else {
+                // console.log(response);
+                reject(new Error("Request failed. Status code: "  + response.statusCode + ", " + body["message"]));
             }
-            body = JSON.parse(body);
-            reject(new Error("Request failed. Status code: "  + response.statusCode + ", " + body["message"]));
-            
+            // body = JSON.parse(body);
         });
     }); 
 }

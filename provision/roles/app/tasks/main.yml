@@ -1,10 +1,16 @@
 ---
 # - name: npm install
-- npm: path={{local_dir}}
-  
-- name: rollup package
-  comman: rollup -c
+# - npm: path={{local_dir}}
+    
+- name: install npm packages locally
+  local_action: npm install path={{local_dir}}
   # local_action: npm install path={{local_dir}}
+
+- name: rollup deployment
+  local_action: rollup -c 
+
+- name: Install npm packages
+  npm: path={{local_dir}}
 
 # - name: rollup
 #   command: rollup 
