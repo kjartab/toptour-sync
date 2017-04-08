@@ -2,9 +2,10 @@ const utApi = require('./utApi.js');
 const utDb = require('./db.js');
 
 
-function updateDocument(type, id) {
+const updateDocument = (type, id) => {
     return new Promise(function(resolve, reject) {
 
+        
         utApi.getDocument(type, id)
         .then(function(response) {
             utDb.updateDocument(type, id, response)
@@ -14,7 +15,8 @@ function updateDocument(type, id) {
         .catch(reject);
 
     });
-}
+
+} 
 
 function insertDocument(type, id) {
     return new Promise(function(resolve, reject) {
