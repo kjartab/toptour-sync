@@ -3,3 +3,4 @@ node_modules/
 build/
 data/
 provision/roles/ansible-role*
+provision/roles/ansible-role-geoserver
