@@ -1,6 +1,6 @@
 var assert = require('assert');
 
-var utApi = require('../')
+// var utApi = require('../')
 
 describe('Array', function() {
   describe('#indexOf()', function() {
