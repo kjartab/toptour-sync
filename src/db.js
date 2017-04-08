@@ -1,6 +1,6 @@
 var Pool = require('pg').Pool;
 
-console.log(process.env);
+// console.log(process.env);
 
 var pool = new Pool({
     user: process.env['DB_USER'], //env var: PGUSER 
@@ -44,7 +44,7 @@ function getDocumentsByIds(type, ids) {
     for (var i=0; i<ids.length; i++) {
         params.push("$"+(i+1));
     }
-
+    
     var query = 'SELECT id, attribs, ST_AsgeoJson(geom) FROM ' + schema + '.' + type + ' WHERE id IN (' + params.join(",") + ');';
     return poolQuery(query, ids);
 }
@@ -107,7 +107,7 @@ function updateDocument(type, id, doc) {
 
     var query = "UPDATE " + schema + "." + type + " SET attribs = $1, geom = ST_GeomFromGeojson($2) WHERE id=$3";
     return poolQuery(query, tuples);
-
+    
 }
 
 function upsertDocument(type, id, document) {
