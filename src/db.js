@@ -44,7 +44,7 @@ function getDocumentsByIds(type, ids) {
     for (var i=0; i<ids.length; i++) {
         params.push("$"+(i+1));
     }
-    
+
     var query = 'SELECT id, attribs, ST_AsgeoJson(geom) FROM ' + schema + '.' + type + ' WHERE id IN (' + params.join(",") + ');';
     return poolQuery(query, ids);
 }
@@ -82,7 +82,6 @@ function getGeometry(doc) {
 }
 
 function insertDocument(type, id, doc) {
-    doc = JSON.parse(doc);
     var attribs = getAttributes(doc);
     var geom = getGeometry(doc);
     var tuples = [attribs, geom];
@@ -95,19 +94,19 @@ function insertDocument(type, id, doc) {
         tuples.push(id);
     }
     var query = "INSERT INTO " + schema + "." + type + "(attribs, geom " + alt + ") VALUES ($1, ST_GeomFromGeojson($2) " + altvar + " );";
+    console.log(query);
     return poolQuery(query, tuples);
 
 }
 
 function updateDocument(type, id, doc) {
-    doc = JSON.parse(doc);
     var attribs = getAttributes(doc);
     var geom = getGeometry(doc);
     var tuples = [attribs, geom, id];
 
     var query = "UPDATE " + schema + "." + type + " SET attribs = $1, geom = ST_GeomFromGeojson($2) WHERE id=$3";
     return poolQuery(query, tuples);
-    
+
 }
 
 function upsertDocument(type, id, document) {
@@ -160,6 +159,7 @@ module.exports = {
     getDocumentsByIds : getDocumentsByIds,
     upsertDocument : upsertDocument,
     updateDocument : updateDocument,
+    deleteDocument: deleteDocument,
     insertDocument : insertDocument,
     createSchema : createSchema,
     createGeomJsonbTable : createGeomJsonbTable
