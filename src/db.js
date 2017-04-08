@@ -14,23 +14,23 @@ var pool = new Pool({
 
 var schema = 'utno' + (process.env['SYS_ENV'] == 'dev' ? '_dev' : '');
 
-pool.on(' error', function(e, client) {
+pool.on(' error', (e, client) => {
     console.log("db error", e.message, e.trace);
 });
 
 
-function createGeomJsonbTable(table) {
+const createGeomJsonbTable = (table) => {
     var query = "CREATE TABLE IF NOT EXISTS " + schema + "." + table + " (id varchar primary key, attribs jsonb, geom geometry)"
     return poolQuery(query);
 }
 
-function createSchema(schema) {
+const createSchema = (schema) => {
     var query = "CREATE SCHEMA IF NOT EXISTS " + schema;
     var tuples = [];
     return poolQuery(query, tuples);
 }
 
-function getDocument(parameters) {
+const getDocument = (parameters) => {
     var type = parameters.type;
     var id = parameters.id;
     var query = 'SELECT id, attribs, ST_AsgeoJson(geom) FROM ' + schema + '.' + type + ' WHERE id=$1';
@@ -38,7 +38,7 @@ function getDocument(parameters) {
     return poolQuery(query, tuples);
 }
 
-function getDocumentsByIds(type, ids) {
+const getDocumentsByIds = (type, ids) => {
 
     var params = [];
     for (var i=0; i<ids.length; i++) {
@@ -49,7 +49,7 @@ function getDocumentsByIds(type, ids) {
     return poolQuery(query, ids);
 }
 
-function getDocuments(parameters) {
+const getDocuments = (parameters) => {
     var type = parameters.type;
     
     var tuples = [];
@@ -64,7 +64,7 @@ function getDocuments(parameters) {
     return poolQuery(query, tuples);
 }
 
-function getAttributes(doc) {
+const getAttributes = (doc) => {
     var attribs = {};
     for (var key in doc) {
         if (key != 'geojson') {
@@ -74,14 +74,14 @@ function getAttributes(doc) {
     return attribs;
 }
 
-function getGeometry(doc) {
+const getGeometry = (doc) => {
     if (doc.hasOwnProperty('geojson')) {
         return doc['geojson'];
     };
     return null;        
 }
 
-function insertDocument(type, id, doc) {
+const insertDocument = (type, id, doc) => {
     var attribs = getAttributes(doc);
     var geom = getGeometry(doc);
     var tuples = [attribs, geom];
@@ -99,7 +99,7 @@ function insertDocument(type, id, doc) {
 
 }
 
-function updateDocument(type, id, doc) {
+const updateDocument = (type, id, doc) => {
     var attribs = getAttributes(doc);
     var geom = getGeometry(doc);
     var tuples = [attribs, geom, id];
@@ -109,11 +109,11 @@ function updateDocument(type, id, doc) {
 
 }
 
-function upsertDocument(type, id, document) {
+const upsertDocument = (type, id, document) => {
     var query = 'SELECT ' + schema + '.' + type + ' WITH VALUES ' + values + ' WHERE id='+id;
     var tuples = [id];
 
-    return new Promise(function(resolve, reject) {
+    return new Promise((resolve, reject) => {
         var upsertPromise = poolQuery(query, tuples);
         upsertPromise
         .then(resolve)
@@ -121,23 +121,23 @@ function upsertDocument(type, id, document) {
     });
 }
 
-function deleteDocument(type, id) {
+const deleteDocument = (type, id) => {
     var query = 'DELETE FROM ' + schema + '.' + type + ' WHERE id=$1::varchar;'
     var tuples = [id]
     return poolQuery(query, tuples);
 }
 
-function poolQuery(query, tuples) {
+const poolQuery = (query, tuples) => {
 
-    return new Promise(function(resolve, reject) {
+    return new Promise((resolve, reject) => {
 
-        pool.connect(function(err, client, done) {
+        pool.connect((err, client, done) => {
             if (err) {
                 reject(err);
                 return;
             }
 
-            client.query(query, tuples, function(err, result) {
+            client.query(query, tuples, (err, result) => {
                 
                 done();
 

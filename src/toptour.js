@@ -6,37 +6,38 @@ const updateDocument = (type, id) => {
     return new Promise( async (resolve, reject) => {
         try {
             var doc = await utApi.getDocument(type, id);
-            console.log(typeof doc);
             await utDb.updateDocument(type, id, doc);
-            console.log("type", type, "id", id);
-            resolve({type: type, inserted: id});
+            resolve({type: type, updated: id});
         } catch (error) {
             if (error.httpStatusCode) {
                 switch (error.httpStatusCode) {
                     case 404:
-                    console.log("deleting ", type, id);
-                        await utDb.deleteDocument(type, id);
-                        resolve({ type : type, deleted: id});
+                        try {
+                            await utDb.deleteDocument(type, id);
+                            resolve({ type : type, deleted: id});
+                        } catch (error) {
+                            reject(error);
+                        }
+                        
                     default:
                         reject(error);
                 }
+            } else {
+                reject(error);
             }
-            console.log(error);
-            reject(error);
         }
     });
 }
 
 function insertDocument(type, id) {
-    return new Promise(function(resolve, reject) {
-
-        utApi.getDocument(type, id)
-        .then(function(response) {
-            utDb.insertDocument(type, id, response)
-            .then(resolve)
-            .catch(reject);
-        })
-        .catch(handleError);
+    return new Promise( async (resolve, reject) => {
+        try {
+            var doc = await utApi.getDocument(type, id);
+            await utDb.insertDocument(type, id, doc);
+            resolve({ type: type, inserted: id});
+        } catch (error) {
+            reject(error);
+        }
     });
 }
 
@@ -71,7 +72,7 @@ const mergeInUpdates = async (type, docUpdates) => {
                         }
 
                     } else {
-                        updateDocPromises.push(updateDocument(type, upd._id));
+                        updateDocPromises.push(insertDocument(type, upd._id));
                     }
 
                 }
